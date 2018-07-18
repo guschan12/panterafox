@@ -1,0 +1,20 @@
+.avatar_preview_wrap{
+    margin-top: 15px;
+}
+.avatar_preview_wrap img{
+    max-width: 100%!important;
+}
+.avatar_preview {
+    width: 60px!important;
+    height: 60px!important;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+    display: inline-block;
+    margin: 0 10px;
+}
+.avatar_preview:first-child {
+    width: 120px!important;
+    height: 120px!important;
+}
