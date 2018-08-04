@@ -2,6 +2,8 @@
 
 namespace PanteraFox\Services;
 
+use PanteraFox\Country;
+
 class IpManager
 {
     /**
@@ -34,5 +36,10 @@ class IpManager
     private function getIpLocationViaAPI($ipAddress)
     {
         return json_decode(file_get_contents('http://geoip.nekudo.com/api/'. $ipAddress), true);
+    }
+
+    public function getAllCountries()
+    {
+        return Country::all();
     }
 }

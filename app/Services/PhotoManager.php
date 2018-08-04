@@ -193,6 +193,32 @@ class PhotoManager
         return $photo_renders;
     }
 
+    public function loadMoreForWorld($offset)
+    {
+        $loadedPhotos = UserPhotos::offset($offset)->limit(16)->get();
+
+        foreach ($loadedPhotos as $index => $photo)
+        {
+            $tops = PhotoTop::select('user_id')->where('photo_id', $photo->id)->get();
+            $topers = [];
+            $owner = User::find($photo->user_id);
+            foreach ($tops as $top)
+            {
+                $topers[] = $top->user_id;
+            }
+            $photo->owner = $owner;
+            $photo->topers = $topers;
+            $photo_renders[] =  view('partial.photo', [
+                'photo' => $photo,
+                'index' => $offset + $index,
+                'isOwn' => false,
+                'showOwner' => false
+            ])->render();
+        }
+
+        return $photo_renders;
+    }
+
     /**
      * @param string $photoId
      * @return bool

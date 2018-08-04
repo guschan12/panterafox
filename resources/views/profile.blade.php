@@ -39,19 +39,35 @@
                                     @if(!$userProfile->isOwn)
                                         <br><br>
                                     @endif
-                                    @if($userProfile->is_verified === 1)
+                                    @if($userProfile->is_verified === 99)
                                         <div class="upload">
                                             <p class="text-left black-title text-xs">video</p>
                                             <img src="https://img.youtube.com/vi/Nq4sZVYhPWM/mqdefault.jpg" alt="">
                                             <img src="https://img.youtube.com/vi/d9hSY7D4nGg/mqdefault.jpg" alt="">
                                         </div>
                                     @endif
+                                        @if(count($userProfile->getRelations()['userPhotos']) > 0)
                                     <div class="upload ">
                                         <p class="text-left black-title text-xs">photo</p>
-                                        <img src="https://img.youtube.com/vi/Nq4sZVYhPWM/mqdefault.jpg" alt="">
-                                        <img src="https://img.youtube.com/vi/d9hSY7D4nGg/mqdefault.jpg" alt="">
+                                        <img
+                                                src="{{$userProfile->getRelations()['userPhotos'][0]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][0]->cache_token }}"
+                                                alt="">
+                                        @if(isset($userProfile->getRelations()['userPhotos'][1]))
+                                        <img
+                                                src="{{$userProfile->getRelations()['userPhotos'][1]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][1]->cache_token }}"
+                                                alt="">@endif
+                                        @if(isset($userProfile->getRelations()['userPhotos'][2]))
+                                        <img
+                                                src="{{$userProfile->getRelations()['userPhotos'][2]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][2]->cache_token }}"
+                                                alt="">@endif
+                                        @if(isset($userProfile->getRelations()['userPhotos'][3]))
+                                        <img
+                                                src="{{$userProfile->getRelations()['userPhotos'][3]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][3]->cache_token }}"
+                                                alt="">@endif
+
                                     </div>
-                                    @if($userProfile->is_verified === 0)
+                                        @endif
+                                    @if($userProfile->is_verified === 99)
                                         <div class="upload ">
                                             <p class="text-left black-title text-xs"></p>
                                             <img src="https://img.youtube.com/vi/Nq4sZVYhPWM/mqdefault.jpg" alt="">
@@ -66,13 +82,17 @@
             </div>
         </div>
 
+        <?// var_dump(count($userProfile->getRelations()['userPhotos'])); ?>
+        <?// var_dump($userProfile->getRelations()['userPhotos'][0]); ?>
+
         <nav class="navbar navbar-expand-lg navbar-dark  bg-dark ">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#profileNavbarSupportedContent"
+                    aria-controls="profileNavbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse" id="profileNavbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item {{ $section == 'photo' ? 'active' : '' }}">
                         <a class="nav-link" href="/profile/{{$userProfile->id}}">
@@ -123,11 +143,11 @@
                         @endif
 
                         @if($countContent > 8)
-                                <div class="col-md-12 text-center empty-note">
-                                    <div class="btn btn-primary" id="loadmore">
-                                        Load more ...
-                                    </div>
+                            <div class="col-md-12 text-center empty-note">
+                                <div class="btn btn-primary" id="loadmore">
+                                    Load more ...
                                 </div>
+                            </div>
                         @endif
                     @endif
                     @if($section == 'video')
@@ -145,97 +165,99 @@
                             </div>
                         @endif
                         @if($countContent > 6)
-                                <div class="col-md-12 text-center empty-note">
-                                    <div class="btn btn-primary" id="loadmore">
-                                        Load more ...
-                                    </div>
+                            <div class="col-md-12 text-center empty-note">
+                                <div class="btn btn-primary" id="loadmore">
+                                    Load more ...
                                 </div>
+                            </div>
                         @endif
 
-                            <script>
-                                $(document).ready(function () {
-                                    $('#viewVideoModal').on('hide.bs.modal', function (e) {
-                                        var modal = $(e.target);
-                                        modal.find('iframe').attr('src', "");
-                                    });
+                        <script>
+                            $(document).ready(function () {
+                                $('#viewVideoModal').on('hide.bs.modal', function (e) {
+                                    var modal = $(e.target);
+                                    modal.find('iframe').attr('src', "");
                                 });
+                            });
 
-                                $(document).on('click', '.album-item-wrap.video-item img', function () {
-                                    var modal = $("#viewVideoModal");
-                                    var id = $(this).closest('.video-item').data('id');
-                                    var ytid = $(this).closest('.video-item').data('ytid');
-                                    var link = 'https://www.youtube-nocookie.com/embed/' + ytid + '?rel=0&autoplay=true';
-                                    var views = parseInt($(this).closest('.video-item').find('.views').children('span').text()) + 1;
-                                    $(this).closest('.video-item').find('.views').children('span').text(views);
-                                    modal.find('iframe').attr('src', link);
-                                    modal.modal();
-                                    $.ajax({
-                                        type: 'post',
-                                        url: '/profile/user/video/view',
-                                        beforeSend: function (xhrObj) {
-                                            xhrObj.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
-                                        },
-                                        data: {id: id},
-                                        dataType: 'json',
-                                        success: function (res) {
+                            $(document).on('click', '.album-item-wrap.video-item img', function () {
+                                var modal = $("#viewVideoModal");
+                                var id = $(this).closest('.video-item').data('id');
+                                var ytid = $(this).closest('.video-item').data('ytid');
+                                var link = 'https://www.youtube-nocookie.com/embed/' + ytid + '?rel=0&autoplay=true';
+                                var views = parseInt($(this).closest('.video-item').find('.views').children('span').text()) + 1;
+                                $(this).closest('.video-item').find('.views').children('span').text(views);
+                                modal.find('iframe').attr('src', link);
+                                modal.modal();
+                                $.ajax({
+                                    type: 'post',
+                                    url: '/profile/user/video/view',
+                                    beforeSend: function (xhrObj) {
+                                        xhrObj.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
+                                    },
+                                    data: {id: id},
+                                    dataType: 'json',
+                                    success: function (res) {
 //                                          console.log(res);
-                                        },
-                                        error: function (err) {
+                                    },
+                                    error: function (err) {
 //                                          console.log(err);
-                                        }
-                                    });
+                                    }
                                 });
+                            });
 
-                                $(document).on('click', '.bar-button.remove', function () {
-                                    var $this = $(this);
-                                    var id = $(this).closest('.album-item-wrap').data('id');
+                            $(document).on('click', '.bar-button.remove', function () {
+                                var $this = $(this);
+                                var id = $(this).closest('.album-item-wrap').data('id');
 
-                                    Swal({
-                                        title: 'Are you sure?',
-                                        text: 'You will not be able to recover this video!',
-                                        type: 'warning',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Yes, delete it!',
-                                        cancelButtonText: 'No, keep it'
-                                    }).then((result) => {
-                                            if (result.value){
-                                            ajax(
-                                                '/profile/user/video/remove',
-                                                {
-                                                    id: id
-                                                },
-                                                function (res) {
-                                                    if (res.success) {
-                                                        window.location.reload()
-                                                    }
-                                                    else {
-                                                        Swal(
-                                                            'Error',
-                                                            'Something went wrong during deleting your video',
-                                                            'error'
-                                                        )
-                                                    }
-                                                },
-                                                function (err) {
-                                                    console.log(err)
+                                Swal({
+                                    title: 'Are you sure?',
+                                    text: 'You will not be able to recover this video!',
+                                    type: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Yes, delete it!',
+                                    cancelButtonText: 'No, keep it'
+                                }).then((result) => {
+                                    if (result.value) {
+                                        ajax(
+                                            '/profile/user/video/remove',
+                                            {
+                                                id: id
+                                            },
+                                            function (res) {
+                                                if (res.success) {
+                                                    window.location.reload()
                                                 }
-                                            );
-                                        }
-                                    });
+                                                else {
+                                                    Swal(
+                                                        'Error',
+                                                        'Something went wrong during deleting your video',
+                                                        'error'
+                                                    )
+                                                }
+                                            },
+                                            function (err) {
+                                                console.log(err)
+                                            }
+                                        );
+                                    }
                                 });
-                            </script>
-                            <!-- Modal -->
-                            <div class="modal fade" id="viewVideoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                                 aria-hidden="true">
-                                <div class="modal-dialog" style="max-width: 50%; margin: 7rem auto;" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-body" style="padding: 0; margin-bottom: -10px;">
-                                            <iframe width="100%" height="500" src=""
-                                                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                        </div>
+                            });
+                        </script>
+                        <!-- Modal -->
+                        <div class="modal fade" id="viewVideoModal" tabindex="-1" role="dialog"
+                             aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog" style="max-width: 50%; margin: 7rem auto;" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body" style="padding: 0; margin-bottom: -10px;">
+                                        <iframe width="100%" height="500" src=""
+                                                frameborder="0" allow="autoplay; encrypted-media"
+                                                allowfullscreen></iframe>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     @endif
 
                 </div>
@@ -283,8 +305,8 @@
         function getPhotoOffset() {
             return $('.album-body .album-item-wrap').length;
         }
-        
-        function getVideoOffset () {
+
+        function getVideoOffset() {
             return $('.album-body .album-item-wrap.video-item').length;
         }
 
@@ -352,8 +374,7 @@
 
             $('#loadmore').click(function () {
                 var content = $('.album-body').data('content');
-                if(content == 'video')
-                {
+                if (content == 'video') {
                     var offset = getVideoOffset();
                     ajax(
                         'user/video/loadmore',
@@ -362,8 +383,7 @@
                             offset: getVideoOffset()
                         },
                         function (res) {
-                            if(res.success)
-                            {
+                            if (res.success) {
                                 $.each(res.videos, function () {
                                     $('#loadmore').parent('div').before(this);
                                 });
@@ -376,8 +396,7 @@
                     );
 
                 }
-                if(content == 'photo')
-                {
+                if (content == 'photo') {
                     var offset = getVideoOffset();
                     ajax(
                         'user/photo',
@@ -387,8 +406,7 @@
                             offset: getPhotoOffset()
                         },
                         function (res) {
-                            if(res.success)
-                            {
+                            if (res.success) {
                                 $.each(res.photos, function () {
                                     $('#loadmore').parent('div').before(this);
                                 });
@@ -405,8 +423,7 @@
         }); //End of document ready
 
         $(document).on('click', '.album-item-wrap img', function () {
-            if(!$(this).closest('.album-item-wrap').hasClass('video-item'))
-            {
+            if (!$(this).closest('.album-item-wrap').hasClass('video-item')) {
                 var pswpElement = document.querySelectorAll('.pswp')[0];
                 var items = getPswpItems();
 
@@ -488,18 +505,17 @@
                 cancelButtonText: 'No, keep it'
             }).then((result) => {
                 if (result.value
-            )
-            {
-                ajax(
-                    'user/photo',
-                    {
-                        action: 'remove',
-                        id: id,
-                        offset: getPhotoOffset()
-                    },
-                    function (res) {
-                        if (res.success) {
-                            window.location.reload()
+                ) {
+                    ajax(
+                        'user/photo',
+                        {
+                            action: 'remove',
+                            id: id,
+                            offset: getPhotoOffset()
+                        },
+                        function (res) {
+                            if (res.success) {
+                                window.location.reload()
 //                            if (res.photoData) {
 //                                var photoData = res.photoData;
 //                                var photo = photoTpl.replace('[[thumb_link]]', photoData.thumb_link);
@@ -522,18 +538,18 @@
 //                                'Your photo has been deleted.',
 //                                'success'
 //                            )
+                            }
+                            else {
+                                Swal(
+                                    'Error',
+                                    'Something went wrong during deleting your photo',
+                                    'error'
+                                )
+                            }
                         }
-                        else {
-                            Swal(
-                                'Error',
-                                'Something went wrong during deleting your photo',
-                                'error'
-                            )
-                        }
-                    }
-                );
-            }
-        });
+                    );
+                }
+            });
 
 
         });

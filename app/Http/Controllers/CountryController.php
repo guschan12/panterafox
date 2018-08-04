@@ -75,8 +75,8 @@ class CountryController extends Controller
             $videos = DB::select(DB::raw("SELECT user_videos.* FROM user_videos
                                 LEFT JOIN users ON users.id = user_videos.user_id
                                 LEFT JOIN countries ON users.country_id = countries.id
-                                WHERE countries.name = 'switzerland'
-                                LIMIT $contentLimit"));
+                                WHERE countries.name = :countryName
+                                LIMIT $contentLimit"), [':countryName' => $countryName]);
 
             $countVideos = DB::select(DB::raw("SELECT COUNT(user_videos.id) as q FROM user_videos
                                 LEFT JOIN users ON users.id = user_videos.user_id
@@ -188,6 +188,20 @@ class CountryController extends Controller
         }
 
         return ['asd'=>$content];
+    }
+
+    public function loadMoreWorld
+    (
+        $content,
+        Request $request,
+        PhotoManager $photoManager,
+        VideoManager $videoManager
+    )
+    {
+        if ($content == 'photo')
+        {
+            return $photoManager->loadMoreForWorld($request->post('offset'));
+        }
     }
 
 

@@ -42,39 +42,4 @@
     <script src="/js/top.js"></script>
 
 
-
-    <!-- Modal -->
-    <div class="modal fade" id="countryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Choose your country</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        @foreach($countries as $country)
-                            <div class="col-md-4 country-item">
-                                <a href="/country/{{ strtolower($country->name) }}">
-                                    <div class="row">
-                                        <div class="col-md-4 country-flag">
-                                            <img src="{{ $country->flag_link }}" alt="{{ $country->name }}">
-                                        </div>
-                                        <div class="col-md-8 country-name">
-                                            <p>{{ $country->name }}</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
 @endsection

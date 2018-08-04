@@ -37,18 +37,6 @@ class AppController extends Controller
             GROUP BY valid_countries.name
             ORDER BY raiting DESC, user_photos.id DESC"));
 
-//        $topCountries = DB::select(DB::raw("SELECT
-//         countries.*,
-//         SUM(top.raiting) AS raiting
-//         FROM user_photos
-//         LEFT JOIN users ON user_photos.user_id = users.id
-//         LEFT JOIN countries ON users.country_id = countries.id
-//         LEFT JOIN
-//         (
-//             SELECT photo_id, COUNT(photo_top.id) AS raiting  FROM photo_top
-//             GROUP BY `photo_id` ORDER BY raiting DESC
-//         ) AS top ON user_photos.id = top.photo_id
-//         GROUP BY countries.name ORDER BY raiting DESC, user_photos.id DESC LIMIT 4"));
 
         foreach ($topCountries as $index => $country)
         {

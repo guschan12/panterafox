@@ -50,9 +50,9 @@ class LoginController extends Controller
     const facebookFields = [
         'name', // Default
         'email', // Default
-        'gender', // Default
-        'birthday', // I've given permission
-        'location', // I've given permission
+//        'gender', // Default
+//        'birthday', // I've given permission
+//        'location', // I've given permission
     ];
 
     /**
@@ -91,11 +91,11 @@ class LoginController extends Controller
             $is_verified = json_decode(file_get_contents("https://graph.facebook.com/v2.1/$socialUser->id?fields=is_verified&access_token=$socialUser->token"))->is_verified;
             $name = explode(' ',$socialUser->name);
             $countryName = 'Ukraine';
-            if(is_array($socialUser->user['location']))
-            {
-                $user_country = explode(',', $socialUser->user['location']['name']);
-                $countryName = trim($user_country[1]);
-            }
+//            if(is_array($socialUser->user['location']))
+//            {
+//                $user_country = explode(',', $socialUser->user['location']['name']);
+//                $countryName = trim($user_country[1]);
+//            }
             $countryId = $countryManager->getCountryIdByName($countryName);
 
             $user = new User;
@@ -104,8 +104,8 @@ class LoginController extends Controller
             $user->email = $socialUser->email;
             $user->password = '';
             $user->country_id = $countryId;
-            $user->birthday = $socialUser->user['birthday'];
-            $user->gender = $socialUser->user['gender'];
+//            $user->birthday = $socialUser->user['birthday'];
+//            $user->gender = $socialUser->user['gender'];
             $user->avatar = $socialUser->avatar;
             $user->avatar_original = $socialUser->avatar_original;
             $user->origin = 'facebook';

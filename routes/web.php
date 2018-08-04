@@ -54,3 +54,4 @@ Route::get('/country/{name}/{content}', 'CountryController@content')->name('coun
 Route::post('/country/{name}/{content}/loadmore', 'CountryController@loadMore');
 
 Route::get('/world/{content}','CountryController@world');
+Route::post('/world/{content}/loadmore','CountryController@loadMoreWorld');
