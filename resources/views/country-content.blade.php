@@ -20,21 +20,21 @@
             <div class="col-6 col-md-4 offset-md-4 text-center text-md-right">
                 @if($country->name == 'TOP world')
                     <ul style="display: inline-block; padding: 0; line-height: 50px;">
-                    <li style="display: inline-block; margin-right: 20px;">
-                        <a style="font-size: 1.4rem;" href="/world/photo">Photo</a>
-                    </li>
-                    <li style="display: inline-block;">
-                        <a style="font-size: 1.4rem;" href="/world/video">Video</a>
-                    </li>
+                    {{--<li style="display: inline-block; margin-right: 20px;">--}}
+                        {{--<a style="font-size: 1.4rem;" href="/world/photo">Photo</a>--}}
+                    {{--</li>--}}
+                    {{--<li style="display: inline-block;">--}}
+                        {{--<a style="font-size: 1.4rem;" href="/world/video">Video</a>--}}
+                    {{--</li>--}}
                 </ul>
                 @else
                     <ul style="display: inline-block; padding: 0; line-height: 50px;">
-                        <li style="display: inline-block; margin-right: 20px;">
-                            <a style="font-size: 1.4rem;" href="/country/{{ strtolower($country->name)}}/photo">Photo</a>
-                        </li>
-                        <li style="display: inline-block;">
-                            <a style="font-size: 1.4rem;" href="/country/{{ strtolower($country->name)}}/video">Video</a>
-                        </li>
+                        {{--<li style="display: inline-block; margin-right: 20px;">--}}
+                            {{--<a style="font-size: 1.4rem;" href="/country/{{ strtolower($country->name)}}/photo">Photo</a>--}}
+                        {{--</li>--}}
+                        {{--<li style="display: inline-block;">--}}
+                            {{--<a style="font-size: 1.4rem;" href="/country/{{ strtolower($country->name)}}/video">Video</a>--}}
+                        {{--</li>--}}
                     </ul>
                 @endif
             </div>

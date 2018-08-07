@@ -4,6 +4,7 @@ namespace PanteraFox\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PanteraFox\PhotoTop;
 use PanteraFox\User;
 use PHPImageWorkshop\ImageWorkshop;
@@ -167,9 +168,15 @@ class PhotoManager
         $countryManager = new CountryManager();
         $country_id = $countryManager->getCountryIdByName($countryName);
         $photo_renders = [];
-        $loadedPhotos = UserPhotos::whereHas('user', function ($query) use ($country_id){
-            $query->where('country_id',$country_id);
-        })->offset($offset)->limit(16)->get();
+
+        $loadedPhotos = DB::select(DB::raw("SELECT user_photos.* FROM `user_photos`
+                            LEFT JOIN users ON user_photos.user_id = users.id
+                            LEFT JOIN
+                              (select count(*) as count, photo_id from photo_top group by photo_id) as top
+                            on user_photos.id = top.photo_id
+                            WHERE users.country_id = ?
+                            order by top.count desc , user_photos.id desc
+                            LIMIT $offset, 16"), [$country_id]);
 
         foreach ($loadedPhotos as $index => $photo)
         {
@@ -193,9 +200,20 @@ class PhotoManager
         return $photo_renders;
     }
 
+    /**
+     * @param $offset
+     * @return array
+     * @throws \Throwable
+     */
     public function loadMoreForWorld($offset)
     {
-        $loadedPhotos = UserPhotos::offset($offset)->limit(16)->get();
+        $loadedPhotos = DB::select(DB::raw("SELECT user_photos.* FROM `user_photos`
+                            LEFT JOIN
+                              (select count(*) as count, photo_id from photo_top group by photo_id) as top
+                            on user_photos.id = top.photo_id
+                            order by top.count desc , user_photos.id desc
+                            LIMIT ?, 16"), [$offset]);
+
 
         foreach ($loadedPhotos as $index => $photo)
         {

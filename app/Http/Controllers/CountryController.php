@@ -38,7 +38,11 @@ class CountryController extends Controller
             $contentLimit = 16;
             $countryPhotos = DB::select(DB::raw("SELECT user_photos.* FROM `user_photos`
                             LEFT JOIN users ON user_photos.user_id = users.id
+                            LEFT JOIN
+                              (select count(*) as count, photo_id from photo_top group by photo_id) as top
+                            on user_photos.id = top.photo_id
                             WHERE users.country_id = ?
+                            order by top.count desc , user_photos.id desc
                             LIMIT $contentLimit"), [$country->id]);
             $countPhotos = DB::select(DB::raw("SELECT COUNT(user_photos.id) AS q FROM `user_photos`
                             LEFT JOIN users ON user_photos.user_id = users.id
@@ -72,16 +76,17 @@ class CountryController extends Controller
             $params = Params::find(1);
             $top_views = $params->top_views;
 
-            $videos = DB::select(DB::raw("SELECT user_videos.* FROM user_videos
+            $videos = DB::select(DB::raw("SELECT user_videos.*, users.first_name, users.last_name FROM user_videos
                                 LEFT JOIN users ON users.id = user_videos.user_id
                                 LEFT JOIN countries ON users.country_id = countries.id
                                 WHERE countries.name = :countryName
+                                ORDER BY user_videos.views DESC , user_videos.updated_at
                                 LIMIT $contentLimit"), [':countryName' => $countryName]);
 
             $countVideos = DB::select(DB::raw("SELECT COUNT(user_videos.id) as q FROM user_videos
                                 LEFT JOIN users ON users.id = user_videos.user_id
                                 LEFT JOIN countries ON users.country_id = countries.id
-                                WHERE countries.name = 'switzerland'"))[0]->q;
+                                WHERE countries.name = ?"),[$countryName])[0]->q;
 
             foreach ($videos as $video)
             {
@@ -116,6 +121,10 @@ class CountryController extends Controller
         if ($content == 'photo')
         {
             return $photoManager->loadMoreForCountry($countryName, $offset);
+        }
+        if ($content == 'video')
+        {
+            return $videoManager->loadMoreForCountry($countryName, $offset);
         }
     }
 
@@ -166,7 +175,9 @@ class CountryController extends Controller
             $params = Params::find(1);
             $top_views = $params->top_views;
 
-            $videos = DB::select(DB::raw("SELECT * FROM user_videos ORDER BY views desc, id desc limit $contentLimit"));
+            $videos = DB::select(DB::raw("SELECT user_videos.*, u.first_name, u.last_name FROM user_videos
+                LEFT JOIN users u on user_videos.user_id = u.id
+                ORDER BY views desc, id desc limit $contentLimit"));
 
             $countVideos = DB::select(DB::raw("SELECT COUNT(user_videos.id) as q FROM user_videos"))[0]->q;
 
@@ -201,6 +212,10 @@ class CountryController extends Controller
         if ($content == 'photo')
         {
             return $photoManager->loadMoreForWorld($request->post('offset'));
+        }
+        if ($content == 'video')
+        {
+            return $videoManager->loadMOreForWorld($request->post('offset'));
         }
     }
 

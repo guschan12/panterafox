@@ -8,6 +8,11 @@
     {{--<meta name="viewport" content="width=device-width, initial-scale=1">--}}
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
 
+    <meta property="og:url"           content="https://panterafox.top/world/video" />
+    <meta property="og:type"          content="website" />
+    <meta property="og:title"         content="Pantera Fox" />
+    <meta property="og:description"   content="Pop Stars rating of the world" />
+    <meta property="og:image"         content="https://panterafox.top/images/favicon.jpg" />
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -58,6 +63,10 @@
             background-color: #42AEEC;
             color: #fff;
         }
+        .fb_iframe_widget_fluid
+        {
+            display: inline-block!important;
+        }
     </style>
 
 </head>
@@ -93,22 +102,22 @@
                     </button>
 
                     <div class="navbar-collapse d-none d-md-block" id="navbarSupportedContentD">
-                        <ul class="navbar-nav mr-auto text-center" style="color: #ff7a03">
+                        <ul class="navbar-nav m-auto text-center" style="color: #ff7a03">
                             @auth
-                                <li class="nav-item">
+                                <li class="nav-item" style="margin-right: 150px;">
                                     <a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"
                                        href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/video">TOP
                                         <br> video</a>
                                 </li>
-                                <li class="nav-item active">
-                                    <a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"
-                                       href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/photo">TOP
-                                        <br> photo</a>
-                                </li>
+                                {{--<li class="nav-item active">--}}
+                                    {{--<a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"--}}
+                                       {{--href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/photo">TOP--}}
+                                        {{--<br> photo</a>--}}
+                                {{--</li>--}}
                             @endauth
                             <li class="nav-item active">
                                 <a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"
-                                   href="/world/photo">TOP <br> world</a>
+                                   href="/world/video">TOP <br> world</a>
                             </li>
                         </ul>
                         <!-- Right Side Of Navbar -->
@@ -162,15 +171,15 @@
                                href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/video">TOP
                                 <br> video</a>
                         </li>
-                        <li class="nav-item active">
-                            <a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"
-                               href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/photo">TOP
-                                <br> photo</a>
-                        </li>
+                        {{--<li class="nav-item active">--}}
+                            {{--<a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"--}}
+                               {{--href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/photo">TOP--}}
+                                {{--<br> photo</a>--}}
+                        {{--</li>--}}
                     @endauth
                     <li class="nav-item active">
                         <a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"
-                           href="/world/photo">TOP <br> world</a>
+                           href="/world/video">TOP <br> world</a>
                     </li>
                 </ul>
                 <!-- Right Side Of Navbar -->
@@ -226,7 +235,7 @@
             <div class="row">
                 <div class="col-12">
                     <p class="text-center">
-                        Â© 2018 PanteraFox Ltd. All rights reserved.
+                        © 2018 PanteraFox Ltd. All rights reserved.
                     </p>
                 </div>
             </div>
@@ -249,8 +258,8 @@
             <div class="modal-body">
                 <div class="row">
                     @foreach($ipManager->getAllCountries() as $country)
-                        <div class="col-md-4 country-item">
-                            <a href="/country/{{ strtolower($country->name) }}">
+                        <div class="col-6 col-md-4 country-item">
+                            <a href="/country/{{ strtolower($country->name) }}/video">
                                 <div class="row">
                                     <div class="col-md-4 country-flag">
                                         <img src="{{ $country->flag_link }}" alt="{{ $country->name }}">

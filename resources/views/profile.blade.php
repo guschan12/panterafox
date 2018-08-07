@@ -1,5 +1,40 @@
 @extends('layouts.header')
 
+
+<script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+<script>window.twttr = (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0],
+            t = window.twttr || {};
+        if (d.getElementById(id)) return t;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://platform.twitter.com/widgets.js";
+        fjs.parentNode.insertBefore(js, fjs);
+
+        t._e = [];
+        t.ready = function(f) {
+            t._e.push(f);
+        };
+
+        return t;
+    }(document, "script", "twitter-wjs"));</script>
+
+<!-- Вставьте этот тег в заголовке страницы или непосредственно перед закрывающим тегом основной части. -->
+<script src="https://apis.google.com/js/platform.js" async defer>
+    {lang: 'en-GB'}
+</script>
+
+
+
 @section('content')
     <!--suppress ALL -->
     <div class="container">
@@ -8,7 +43,29 @@
                 <div class="user-wall"
                      style="height: 300px; background: url('{{ $userProfile->getRelation('cover')->thumb_link }}?{{ $userProfile->getRelation('cover')->cache_token }}'); background-size: cover;">
                     <div class="row">
-                        <div class="col-md-3 offset-md-9">
+                        <div class="d-none d-md-block col-md-5">
+                            <br><br><br>
+                            @if($userProfile->isOwn)
+                            <div style="position: absolute; left: 20px; bottom: 0;">
+                                <!-- Your share button code -->
+                                <div class="fb-share-button"
+                                     data-href="https://panterafox.top/world/video"
+                                     data-layout="button">
+                                </div>
+
+                                <a class="twitter-share-button"
+                                   data-url="https://panterafox.top/world/video"
+                                   data-via="panterafox"
+                                   data-lang="en"
+                                   data-size="smal">
+                                </a>
+
+                                <!-- Поместите этот тег туда, где должна отображаться кнопка "Поделиться". -->
+                                <div class="g-plus" data-action="share" data-href="https://panterafox.top/world/video"></div>
+                            </div>
+                                @endif
+                        </div>
+                        <div class="col-md-3 offset-md-4">
                             <div class="user-wall__data text-center"
                                  style="background: rgba(101, 107, 113, 0.6); height: 300px;">
                                 <div class="ava">
@@ -67,6 +124,7 @@
 
                                     </div>
                                         @endif
+
                                     @if($userProfile->is_verified === 99)
                                         <div class="upload ">
                                             <p class="text-left black-title text-xs"></p>
@@ -82,15 +140,31 @@
             </div>
         </div>
 
-        <?// var_dump(count($userProfile->getRelations()['userPhotos'])); ?>
-        <?// var_dump($userProfile->getRelations()['userPhotos'][0]); ?>
-
         <nav class="navbar navbar-expand-lg navbar-dark  bg-dark ">
             <button class="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#profileNavbarSupportedContent"
                     aria-controls="profileNavbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            @if($userProfile->isOwn)
+                <div class="d-block d-md-none" style="margin-top: 10px;">
+                    <div class="fb-share-button"
+                         data-href="https://panterafox.top/world/video"
+                         data-layout="button">
+                    </div>
+
+                    <a class="twitter-share-button"
+                       data-url="https://panterafox.top/world/video"
+                       data-via="panterafox"
+                       data-lang="en"
+                       data-size="smal">
+                    </a>
+
+                    <!-- Поместите этот тег туда, где должна отображаться кнопка "Поделиться". -->
+                    <div class="g-plus" data-action="share" data-href="https://panterafox.top/world/video"></div>
+                </div>
+            @endif
+
 
             <div class="collapse navbar-collapse" id="profileNavbarSupportedContent">
                 <ul class="navbar-nav mr-auto">

@@ -4,7 +4,9 @@ namespace PanteraFox\Services;
 
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use PanteraFox\Params;
 use PanteraFox\UserVideo;
 
 class VideoManager
@@ -13,6 +15,7 @@ class VideoManager
      * @param string $videoLink
      *
      * @return array
+     * @throws \Exception
      */
     public function add($videoLink)
     {
@@ -63,6 +66,7 @@ class VideoManager
      * @param $user_id
      * @param $offset
      * @return array
+     * @throws \Throwable
      */
     public function loadmore($user_id, $offset)
     {
@@ -85,6 +89,67 @@ class VideoManager
             'success' => true,
             'videos' => $video_renders
         ];
+    }
+
+    /**
+     * @param $countryName
+     * @param $offset
+     * @return array
+     * @throws \Throwable
+     */
+    public function loadMoreForCountry($countryName, $offset)
+    {
+        $params = Params::find(1);
+        $top_views = $params->top_views;
+        $video_renders = [];
+        $videos = DB::select(DB::raw("SELECT user_videos.*, users.first_name, users.last_name FROM user_videos
+                                LEFT JOIN users ON users.id = user_videos.user_id
+                                LEFT JOIN countries ON users.country_id = countries.id
+                                WHERE countries.name = :countryName
+                                ORDER BY user_videos.views DESC , user_videos.updated_at
+                                LIMIT :offset, 12"), [':countryName' => $countryName, 'offset' => $offset]);
+        foreach ($videos as $video)
+        {
+            $raiting = floor($video->views * 100 / $top_views);
+            $raiting = ($raiting < 5 ? 5 : $raiting);
+            $raiting = ($raiting > 95 ? 95 : $raiting);
+            $video->raiting = $raiting;
+            $video_renders[] = view('partial.video', [
+                'video' => $video,
+                'isOwn' => false
+            ])->render();
+        }
+
+        return $video_renders;
+    }
+
+    /**
+     * @param string|int $offset
+     *
+     * @return array
+     * @throws \Throwable
+     */
+    public function loadMoreForWorld($offset)
+    {
+        $params = Params::find(1);
+        $top_views = $params->top_views;
+        $video_renders = [];
+        $videos = DB::select(DB::raw("SELECT * FROM user_videos ORDER BY views desc, id desc limit ?, 12"),[$offset]);
+
+        foreach ($videos as $video)
+        {
+            $raiting = floor($video->views * 100 / $top_views);
+            $raiting = ($raiting < 5 ? 5 : $raiting);
+            $raiting = ($raiting > 95 ? 95 : $raiting);
+            $video->raiting = $raiting;
+
+            $video_renders[] = view('partial.video', [
+                'video' => $video,
+                'isOwn' => false
+            ])->render();
+        }
+
+        return $video_renders;
     }
 
     /**
