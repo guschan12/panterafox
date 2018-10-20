@@ -1,17 +1,17 @@
 @extends('layouts.header')
 
 
-<script>(function(d, s, id) {
+<script>(function (d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
+        js = d.createElement(s);
+        js.id = id;
         js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));</script>
 
 
-
-<script>window.twttr = (function(d, s, id) {
+<script>window.twttr = (function (d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0],
             t = window.twttr || {};
         if (d.getElementById(id)) return t;
@@ -21,7 +21,7 @@
         fjs.parentNode.insertBefore(js, fjs);
 
         t._e = [];
-        t.ready = function(f) {
+        t.ready = function (f) {
             t._e.push(f);
         };
 
@@ -30,7 +30,9 @@
 
 <!-- Вставьте этот тег в заголовке страницы или непосредственно перед закрывающим тегом основной части. -->
 <script src="https://apis.google.com/js/platform.js" async defer>
-    {lang: 'en-GB'}
+    {
+        lang: 'en-GB'
+    }
 </script>
 
 
@@ -46,24 +48,25 @@
                         <div class="d-none d-md-block col-md-5">
                             <br><br><br>
                             @if($userProfile->isOwn)
-                            <div style="position: absolute; left: 20px; bottom: 0;">
-                                <!-- Your share button code -->
-                                <div class="fb-share-button"
-                                     data-href="https://panterafox.top/world/video"
-                                     data-layout="button">
+                                <div style="position: absolute; left: 20px; bottom: 0;">
+                                    <!-- Your share button code -->
+                                    <div class="fb-share-button"
+                                         data-href="https://panterafox.top/world/video"
+                                         data-layout="button">
+                                    </div>
+
+                                    <a class="twitter-share-button"
+                                       data-url="https://panterafox.top/world/video"
+                                       data-via="panterafox"
+                                       data-lang="en"
+                                       data-size="smal">
+                                    </a>
+
+                                    <!-- Поместите этот тег туда, где должна отображаться кнопка "Поделиться". -->
+                                    <div class="g-plus" data-action="share"
+                                         data-href="https://panterafox.top/world/video"></div>
                                 </div>
-
-                                <a class="twitter-share-button"
-                                   data-url="https://panterafox.top/world/video"
-                                   data-via="panterafox"
-                                   data-lang="en"
-                                   data-size="smal">
-                                </a>
-
-                                <!-- Поместите этот тег туда, где должна отображаться кнопка "Поделиться". -->
-                                <div class="g-plus" data-action="share" data-href="https://panterafox.top/world/video"></div>
-                            </div>
-                                @endif
+                            @endif
                         </div>
                         <div class="col-md-3 offset-md-4">
                             <div class="user-wall__data text-center"
@@ -103,27 +106,27 @@
                                             <img src="https://img.youtube.com/vi/d9hSY7D4nGg/mqdefault.jpg" alt="">
                                         </div>
                                     @endif
-                                        @if(count($userProfile->getRelations()['userPhotos']) > 0)
-                                    <div class="upload ">
-                                        <p class="text-left black-title text-xs">photo</p>
-                                        <img
-                                                src="{{$userProfile->getRelations()['userPhotos'][0]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][0]->cache_token }}"
-                                                alt="">
-                                        @if(isset($userProfile->getRelations()['userPhotos'][1]))
-                                        <img
-                                                src="{{$userProfile->getRelations()['userPhotos'][1]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][1]->cache_token }}"
-                                                alt="">@endif
-                                        @if(isset($userProfile->getRelations()['userPhotos'][2]))
-                                        <img
-                                                src="{{$userProfile->getRelations()['userPhotos'][2]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][2]->cache_token }}"
-                                                alt="">@endif
-                                        @if(isset($userProfile->getRelations()['userPhotos'][3]))
-                                        <img
-                                                src="{{$userProfile->getRelations()['userPhotos'][3]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][3]->cache_token }}"
-                                                alt="">@endif
+                                    @if(count($userProfile->getRelations()['userPhotos']) > 0)
+                                        <div class="upload ">
+                                            <p class="text-left black-title text-xs">photo</p>
+                                            <img
+                                                    src="{{$userProfile->getRelations()['userPhotos'][0]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][0]->cache_token }}"
+                                                    alt="">
+                                            @if(isset($userProfile->getRelations()['userPhotos'][1]))
+                                                <img
+                                                        src="{{$userProfile->getRelations()['userPhotos'][1]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][1]->cache_token }}"
+                                                        alt="">@endif
+                                            @if(isset($userProfile->getRelations()['userPhotos'][2]))
+                                                <img
+                                                        src="{{$userProfile->getRelations()['userPhotos'][2]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][2]->cache_token }}"
+                                                        alt="">@endif
+                                            @if(isset($userProfile->getRelations()['userPhotos'][3]))
+                                                <img
+                                                        src="{{$userProfile->getRelations()['userPhotos'][3]->thumb_link}}?{{ $userProfile->getRelations()['userPhotos'][3]->cache_token }}"
+                                                        alt="">@endif
 
-                                    </div>
-                                        @endif
+                                        </div>
+                                    @endif
 
                                     @if($userProfile->is_verified === 99)
                                         <div class="upload ">
@@ -168,15 +171,6 @@
 
             <div class="collapse navbar-collapse" id="profileNavbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item {{ $section == 'photo' ? 'active' : '' }}">
-                        <a class="nav-link" href="/profile/{{$userProfile->id}}">
-                            @if($userProfile->isOwn)
-                                My Photo
-                            @else
-                                Photo
-                            @endif
-                        </a>
-                    </li>
                     @if($userProfile->is_verified === 1)
                         <li class="nav-item  {{ $section == 'video' ? 'active' : '' }}">
                             <a class="nav-link" href="?s=video">
@@ -188,7 +182,48 @@
                             </a>
                         </li>
                     @endif
+                    <li class="nav-item {{ $section == 'photo' ? 'active' : '' }}">
+                        <a class="nav-link" href="/profile/{{$userProfile->id}}?s=photo">
+                            @if($userProfile->isOwn)
+                                My Photo
+                            @else
+                                Photo
+                            @endif
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="my_subscriptions_btn" class="nav-link" data-profile="{{ $userProfile->id }}" data-toggle="modal"
+                           data-target="#subscriptionsModal" href="#">
+                            @if($userProfile->isOwn)
+                                My subscriptions
+                            @endif
+                        </a>
+                    </li>
                 </ul>
+                <div class="col-md-3 text-center" style="padding-right: 0; margin-right: -16px;">
+                    @if($userProfile->isOwn)
+                        <a id="subscribtion-btn" class="btn btn-primary" data-toggle="modal"
+                           data-target="#subscriptionsModal" data-profile="{{$userProfile->id}}"
+                           data-subscriber="@if(isset(Auth::user()->id)){{ Auth::user()->id }}@else false @endif"
+                           data-action="ignore" href="#">
+                    @else
+                            <a id="subscribtion-btn" class="btn btn-primary" data-profile="{{$userProfile->id}}"
+                               data-subscriber="@if(isset(Auth::user()->id)){{ Auth::user()->id }}@else false @endif"
+                               data-action="@if($userProfile->isSubscribed) unsubscribe @else subscribe @endif" href="#">
+                    @endif
+                        @if($userProfile->isOwn)
+                            My Subscribers {{ $userProfile->subscribesCount }}
+                        @else
+                            @if($userProfile->isSubscribed)
+                                Unsubscribe
+                            @else
+                                Subscribe
+                            @endif
+                            {{ $userProfile->subscribesCount }}
+                        @endif
+                    </a>
+                </div>
+
             </div>
         </nav>
 
@@ -225,7 +260,7 @@
                         @endif
                     @endif
                     @if($section == 'video')
-                        @foreach($userProfile->getRelations()['userVideos'] as $userVideo)
+                        @foreach($userProfile->userVideos as $userVideo)
                             @include('partial.video',
                             [
                             'video' => $userVideo,
@@ -260,7 +295,7 @@
                                 var ytid = $(this).closest('.video-item').data('ytid');
                                 var link = 'https://www.youtube-nocookie.com/embed/' + ytid + '?rel=0&autoplay=true';
                                 var views = parseInt($(this).closest('.video-item').find('.views').children('span').text()) + 1;
-                                $(this).closest('.video-item').find('.views').children('span').text(views);
+                                // $(this).closest('.video-item').find('.views').children('span').text(views);
                                 modal.find('iframe').attr('src', link);
                                 modal.modal();
                                 $.ajax({
@@ -494,6 +529,73 @@
                 }
             });
 
+
+            $("#subscribtion-btn").click(function (e) {
+                e.preventDefault();
+                var action = $.trim($(this).data('action'));
+                var subscriber = $.trim($(this).data('subscriber'));
+                var profile = $.trim($(this).data('profile'));
+
+                if (action == 'ignore'){
+                    return true;
+                }
+
+
+                $.ajax({
+                    type: 'post',
+                    url: 'subscriptions',
+                    beforeSend: function (xhrObj) {
+                        xhrObj.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
+                    },
+                    data: {subscriber: subscriber, profile: profile, action: action},
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.success) {
+                            window.location.reload();
+                        }
+                        if (res.needLogin){
+                            window.location='/login';
+                        }
+                        // console.log(res);
+                    },
+                    error: function (err) {
+                        // console.log(err);
+                    }
+
+                });
+            });
+
+            $('#subscriptionsModal').on('show.bs.modal', function (e) {
+                var btn = e.relatedTarget;
+                var modal = $(this);
+                var id = $(btn).data('profile');
+                var url = $(btn).attr('id') == 'subscribtion-btn' ? 'subscribers/list' : 'subscriptions/list';
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    beforeSend: function (xhrObj) {
+                        xhrObj.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
+                    },
+                    data: {id: id},
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.success) {
+                            $.each(res.profiles, function () {
+                                modal.find('.subscription_profiles').append(this);
+                            });
+                        }
+                        // console.log(res);
+                    },
+                    error: function (err) {
+                        // console.log(err);
+                    }
+                });
+            });
+
+            $('#subscriptionsModal').on('hide.bs.modal', function (e){
+                $(this).find('.subscription_profiles').empty();
+            });
+
         }); //End of document ready
 
         $(document).on('click', '.album-item-wrap img', function () {
@@ -687,7 +789,9 @@
                             <div class="col-12">
                                 <form>
                                     <div class="form-group">
-                                        <label for="video_link">YouTube video link</label>
+                                        <label for="video_link" style="margin: 0; line-height: 12px;">YouTube video link</label>
+                                        <i style="display: block; font-size: 12px; color: #6c757d; margin-bottom: 5px;">click
+                                            <a href="https://www.youtube.com/" target="_blank">here</a> to go on YouTube</i>
                                         <input name="video_link" class="form-control" placeholder="YouTube video link"
                                                type="text">
                                         <div class="invalid-feedback">
@@ -708,6 +812,7 @@
                 </div>
             </div>
         </div>
+
 
         <script>
             $(document).ready(function () {
@@ -745,6 +850,28 @@
             });
         </script>
     @endif
+
+
+
+    <!-- Subscriptions Modal -->
+    <div class="modal" id="subscriptionsModal"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">My subscriptions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row subscription_profiles">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Root element of PhotoSwipe. Must have class pswp. -->
     <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">

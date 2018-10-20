@@ -4,16 +4,15 @@ namespace PanteraFox\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
-use PanteraFox\Params;
-use PanteraFox\Services\AppService;
+use PanteraFox\Services\VideoManager;
+use PanteraFox\Subscription;
 use PanteraFox\User;
 use PanteraFox\UserPhotos;
 use PanteraFox\UserVideo;
 
 class ProfileController extends Controller
 {
-    public function index (Request $request, $id)
+    public function index (Request $request, $id, VideoManager $videoManager)
     {
         $userProfile = User::where('id', $id)
             ->with(['userPhotos' => function ($query) {
@@ -27,14 +26,18 @@ class ProfileController extends Controller
             ->with('cover')
             ->first();
 
+        $userProfile->subscribesCount = Subscription::where('profile_id', $id)->get()->count();
+
         if(is_null($userProfile))
         {
             return abort(404);
         }
 
-        $section = $request->get('s') == 'video' ? 'video' : 'photo';
-        $params = Params::find(1);
-        $top_views = $params->top_views;
+        $section = $request->get('s') == 'photo' ? 'photo' : 'video';
+        if (!$userProfile->is_verified)
+        {
+            $section = 'photo';
+        }
         $userProfile->isOwn = false;
         $userProfile->fullName = $userProfile->first_name . ' ' . $userProfile->last_name;
 
@@ -43,9 +46,16 @@ class ProfileController extends Controller
         {
             $userProfile->avatar = $userProfile->getRelation('avatar')->thumb_link . '?' . $userProfile->getRelation('avatar')->cache_token;
         }
-        if(isset(Auth::user()->id) && Auth::user()->id == $userProfile->id)
+
+        if(isset(Auth::user()->id))
         {
-            $userProfile->isOwn = true;
+            if (Auth::user()->id == $userProfile->id){
+                $userProfile->isOwn = true;
+            }
+            $userProfile->isSubscribed = (bool) Subscription::where([
+                'subscriber_id' => Auth::user()->id,
+                'profile_id' => $id
+            ])->get()->count();
         }
 
         if($section == 'photo')
@@ -74,16 +84,9 @@ class ProfileController extends Controller
 
         if($section == 'video')
         {
-            AppService::updateTopViews();
-
             $countVideos = UserVideo::where('user_id', $id)->count();
-            foreach ($userProfile->getRelation('userVideos') as $video)
-            {
-                $raiting = floor($video->views * 100 / $top_views);
-                $raiting = ($raiting < 5 ? 5 : $raiting);
-                $raiting = ($raiting > 95 ? 95 : $raiting);
-                $video->raiting = $raiting;
-            }
+            $beautyVideos = $videoManager->butifyViewsCount($userProfile->getRelation('userVideos'));
+            $userProfile->setRelation('userVideos', $beautyVideos);
 
             return view('profile', [
                 'section' => $section,

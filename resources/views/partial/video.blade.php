@@ -7,6 +7,11 @@
             <img src="/images/icons/yt.png" class="play-icon" />
             <div class="video-data">
                 <div class="row">
+                    <div class="col-12" style="padding: 0;">
+                        <p class="clip-name" style="margin: 0; font-weight: bold; cursor: pointer; min-height: 48px;">
+                            <?php echo strlen($video->title) > 80 ? mb_substr($video->title, 0, 76, "utf-8") . " ..." : $video->title;?>
+                        </p>
+                    </div>
                     <div class="col-6" style="padding: 0;">
                         <div class="video_owner">
                             <a href="/profile/{{ $video->user_id }}" style="color: #1b1e21">{{ $video->first_name }} {{ $video->last_name }}</a>
@@ -20,11 +25,11 @@
                         @endif
                         <div class="views" style="display: inline-block;">
                             <i class="fa fa-eye" aria-hidden="true"></i>
-                            <span>{{ $video->views }}</span>
+                            <span>{{  number_format(preg_replace('/\s+/', '', $video->views), 0, '', ' ') }}</span>
                         </div>
                         <br>
                         <div class="raiting">
-                            <div style="width:{{ $video->raiting }}%;"  class="level"></div>
+
                         </div>
                     </div>
                 </div>

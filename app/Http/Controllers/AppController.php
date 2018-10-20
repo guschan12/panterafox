@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use PanteraFox\Country;
 use PanteraFox\Params;
 use PanteraFox\Services\AppService;
+use PanteraFox\Services\VideoManager;
 use PanteraFox\User;
 
 class AppController extends Controller
@@ -17,7 +18,7 @@ class AppController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(AppService $appService)
+    public function index(AppService $appService, VideoManager $videoManager)
     {
 
         //TODO: IF IT WILL ENABLED IN FUTURE - THIS QUERY CALCULATE TOP OF COUNTRIES BY COUNT LIKE OF PHOTOS
@@ -39,7 +40,32 @@ class AppController extends Controller
 //            GROUP BY valid_countries.name
 //            ORDER BY raiting DESC, user_photos.id DESC"));
 
-        $topCountries = DB::select(DB::raw("SELECT c.name, c.id as country_id, u.id, sum(sum_views) as country_rating FROM countries
+        if (isset(Auth::user()->id)){
+            $topCountries = DB::select(DB::raw("SELECT c.name, c.id as country_id, u.id, sum(sum_views) as country_rating FROM countries
+                          LEFT JOIN users u ON u.country_id = countries.id
+                          right join countries c on u.country_id = c.id
+                          LEFT JOIN
+                          (select *, sum(views) as sum_views
+                           from user_videos
+                           group by user_id)
+                          uv ON uv.user_id = u.id
+                          WHERE u.id != :user_id
+                          group by u.country_id
+                          order by country_rating desc
+                        LIMIT 3"), [':user_id' => Auth::user()->id]);
+
+            $userCountry = collect(DB::select(DB::raw("SELECT c.name, c.id as country_id, u.id, sum(sum_views) as country_rating FROM countries
+                          LEFT JOIN users u ON u.country_id = countries.id
+                          right join countries c on u.country_id = c.id
+                          LEFT JOIN
+                          (select *, sum(views) as sum_views
+                           from user_videos
+                           group by user_id)
+                          uv ON uv.user_id = u.id
+                          WHERE u.id = :user_id"), [':user_id' => Auth::user()->id]))->first();
+            array_unshift($topCountries, $userCountry);
+        } else {
+            $topCountries = DB::select(DB::raw("SELECT c.name, c.id as country_id, u.id, sum(sum_views) as country_rating FROM countries
                           LEFT JOIN users u ON u.country_id = countries.id
                           right join countries c on u.country_id = c.id
                           LEFT JOIN
@@ -50,10 +76,7 @@ class AppController extends Controller
                           group by u.country_id
                           order by country_rating desc
                         LIMIT 4"));
-
-        $params = Params::find(1);
-        $top_views = $params->top_views;
-
+        }
 
         foreach ($topCountries as $index => $country)
         {
@@ -79,14 +102,9 @@ class AppController extends Controller
                                 order by views desc
                                 limit 3"), [$country->country_id]);
 
-            foreach ($topCountryVideo as $video)
-            {
-                $raiting = floor($video->views * 100 / $top_views);
-                $raiting = ($raiting < 5 ? 5 : $raiting);
-                $raiting = ($raiting > 95 ? 95 : $raiting);
-                $video->raiting = $raiting;
-            }
+//            var_dump($topCountryVideo);exit;
 
+            $topCountryVideo = $videoManager->butifyViewsCount($topCountryVideo);
 
 //            foreach ($topCountryPhoto as $index_photo => $photo)
 //            {

@@ -2,15 +2,16 @@
 
 namespace PanteraFox\Services;
 
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
 use PanteraFox\Params;
 use PanteraFox\UserVideo;
 
 class VideoManager
 {
+    /** @var null | array */
+    private $youTubeResponse = null;
+
     /**
      * @param string $videoLink
      *
@@ -28,11 +29,15 @@ class VideoManager
         }
 
         $ytid = $this->getYTIDFromLink($videoLink);
+        $views = $this->getYTViews($ytid);
+        $title = $this->getYTTitle($ytid);
 
         UserVideo::create([
            'user_id' => Auth::user()->id,
             'link' => $videoLink,
-            'video_id' => $ytid
+            'video_id' => $ytid,
+            'views' => $views,
+            'title' => $title
         ]);
 
         return ['success' => true];
@@ -60,6 +65,24 @@ class VideoManager
         UserVideo::where('id',$id)->delete();
 
         return ['success' => true];
+    }
+
+    /**
+     * @param UserVideo[] $videos
+     * @return UserVideo[]
+     */
+    public function butifyViewsCount($videos)
+    {
+        foreach ($videos as $video) {
+            if (is_array($video)){
+                $video['views'] = number_format($video['views'], 0, '', ' ');
+            }else{
+                $video->views = number_format($video->views, 0, '', ' ');
+            }
+
+        }
+
+        return $videos;
     }
 
     /**
@@ -97,17 +120,24 @@ class VideoManager
      * @return array
      * @throws \Throwable
      */
-    public function loadMoreForCountry($countryName, $offset)
+    public function loadMoreForCountry($countryName, $offset, $latest = false)
     {
         $params = Params::find(1);
         $top_views = $params->top_views;
         $video_renders = [];
-        $videos = DB::select(DB::raw("SELECT user_videos.*, users.first_name, users.last_name FROM user_videos
+
+        $video_sql = "SELECT user_videos.*, users.first_name, users.last_name FROM user_videos
                                 LEFT JOIN users ON users.id = user_videos.user_id
                                 LEFT JOIN countries ON users.country_id = countries.id
                                 WHERE countries.name = :countryName
-                                ORDER BY user_videos.views DESC , user_videos.updated_at
-                                LIMIT :offset, 12"), [':countryName' => $countryName, 'offset' => $offset]);
+                                ORDER BY";
+        if (!$latest)
+        {
+            $video_sql .= " user_videos.views DESC ,";
+        }
+        $video_sql .= " user_videos.updated_at LIMIT :offset, 12";
+
+        $videos = DB::select(DB::raw("$video_sql"), [':countryName' => $countryName, 'offset' => $offset]);
         foreach ($videos as $video)
         {
             $raiting = floor($video->views * 100 / $top_views);
@@ -134,7 +164,9 @@ class VideoManager
         $params = Params::find(1);
         $top_views = $params->top_views;
         $video_renders = [];
-        $videos = DB::select(DB::raw("SELECT * FROM user_videos ORDER BY views desc, id desc limit ?, 12"),[$offset]);
+        $videos = DB::select(DB::raw("SELECT user_videos.*, u.first_name, u.last_name FROM user_videos
+                left join users u on user_videos.user_id = u.id
+                ORDER BY views desc, id desc limit ?, 12"),[$offset]);
 
         foreach ($videos as $video)
         {
@@ -175,4 +207,48 @@ class VideoManager
         }
         return $url_parts['v'];
     }
+
+    /**
+     * @param string $ytid
+     * @return string
+     */
+    private function getYTViews($ytid)
+    {
+        $videoInfo = $this->getYouTubeVideoInfo($ytid);
+
+        return $videoInfo['items'][0]['statistics']['viewCount'];
+    }
+
+    /**
+     * @param string $ytid
+     * @return string mixed
+     */
+    private function getYTTitle($ytid)
+    {
+        $videoInfo = $this->getYouTubeVideoInfo($ytid);
+
+        return $videoInfo['items'][0]['snippet']['title'];
+    }
+
+
+    /**
+     * @param string $ytid
+     * @return array
+     */
+    private function getYouTubeVideoInfo($ytid)
+    {
+        if (null === $this->youTubeResponse) {
+            $response = json_decode(
+                file_get_contents(
+                    "https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=$ytid&key=AIzaSyCe7UB6H928GyEjHaIHeY5ZJiAmyxP_dYc"
+                ),
+                true);
+        } else {
+            $response = $this->youTubeResponse;
+        }
+
+        return $response;
+    }
+
+
 }

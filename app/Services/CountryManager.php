@@ -57,9 +57,9 @@ class CountryManager
     public function getCountryShortByIp(IpManager $ipManager)
     {
         $ipLocation = $ipManager->getIpLocation();
-        if (isset($ipLocation['country']['code']))
+        if (isset($ipLocation['countryCode']))
         {
-            return $ipLocation['country']['code'];
+            return $ipLocation['countryCode'];
         }
 
         return $this->defaultCountry->short;

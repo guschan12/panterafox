@@ -55,3 +55,9 @@ Route::post('/country/{name}/{content}/loadmore', 'CountryController@loadMore');
 
 Route::get('/world/{content}','CountryController@world');
 Route::post('/world/{content}/loadmore','CountryController@loadMoreWorld');
+
+Route::post('/profile/subscriptions','SubscriptionsController@index');
+Route::post('/profile/subscriptions/list','SubscriptionsController@subscriptionsList');
+Route::post('/profile/subscribers/list','SubscriptionsController@subscribersList');
+
+Route::post('/news/clear','SubscriptionsController@clearNews');

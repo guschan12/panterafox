@@ -6,18 +6,25 @@
         <div class="row">
             <div class="col-6 col-md-4">
                 <div class="row">
-                    <div class="col-12 col-md-4 text-center text-md-right">
-                        <img style="max-width: 80px; display: inline-block;" src="{{ $country->flag_link }}"
+                    <div class="col-6 col-md-4 text-center text-md-right">
+                        <img style="width: 100%; max-width: 80px; display: inline-block;" src="{{ $country->flag_link }}"
                              alt="{{ $country->name }}">
                     </div>
-                    <div class="col-12 col-md-8 text-center text-md-left">
-                        <p style="font-size: 2rem; font-weight: bold;">
+                    <div style="margin-left: -20px;" class="col-6 col-md-8 text-center text-md-left">
+                        <p style="font-size: 2rem; font-weight: bold; line-height: 33px;">
                             {{ $country->name }}
                         </p>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-4 offset-md-4 text-center text-md-right">
+                @if($country->name !== 'TOP world')
+                <div class="text-right">
+                    <a style="font-size: 1.2em; color: #ff7a03; font-weight: bold; line-height: 15px;     position: absolute;
+    right: 15px;
+    bottom: 12px;" href="?order=new">New</a>
+                </div>
+                @endif
                 @if($country->name == 'TOP world')
                     <ul style="display: inline-block; padding: 0; line-height: 50px;">
                     {{--<li style="display: inline-block; margin-right: 20px;">--}}
@@ -89,7 +96,7 @@
             $('#loadMore').click(function () {
                 $.ajax({
                    type: "post",
-                    url: "{{$section}}/loadmore",
+                    url: "{{$section}}/{{$load_more_xhr}}",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },

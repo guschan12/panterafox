@@ -1,6 +1,10 @@
 @inject('ipManager', 'PanteraFox\Services\IpManager')
+@auth
+    @inject('userNewsService', 'PanteraFox\Subscription\Application\UserNewsService')
+    @inject('countryManager', 'PanteraFox\Services\CountryManager')
+@endauth
 
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
@@ -8,11 +12,16 @@
     {{--<meta name="viewport" content="width=device-width, initial-scale=1">--}}
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
 
-    <meta property="og:url"           content="https://panterafox.top/world/video" />
-    <meta property="og:type"          content="website" />
-    <meta property="og:title"         content="Pantera Fox" />
-    <meta property="og:description"   content="Pop Stars rating of the world" />
-    <meta property="og:image"         content="https://panterafox.top/images/favicon.jpg" />
+    @auth
+    <meta property="og:url" content="https://panterafox.top/country/{{ strtolower($countryManager->getCountryNameById(Auth::user()->country_id)) }}/video"/>
+    @else
+    <meta property="og:url" content="https://panterafox.top/world/video"/>
+    @endguest
+
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="Pantera Fox"/>
+    <meta property="og:description" content="Pop Stars rating of the world"/>
+    <meta property="og:image" content="https://panterafox.top/images/favicon.jpg"/>
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -63,20 +72,20 @@
             background-color: #42AEEC;
             color: #fff;
         }
-        .fb_iframe_widget_fluid
-        {
-            display: inline-block!important;
+
+        .fb_iframe_widget_fluid {
+            display: inline-block !important;
         }
     </style>
 
 </head>
 <body>
 <div id="app">
-    <nav class="navbar navbar-expand-lg navbar-default" style="padding: 0;">
+    <nav class="navbar navbar-expand-lg navbar-default fixed-top" style="padding: 0;">
         <div class="container-fluid" style=" background: #000;">
             <div class="row" style="width: 100%;">
                 <!-- Branding Image -->
-                <div class="col-10 col-md-3 text-left" style="background: #fff;">
+                <div class="col-10 col-md-3 text-left" style="background: #fff; border-bottom: solid 1px #d3e0e9;">
                     <div class="navbar-brand">
                         <a href="{{ url('/') }}">
                             <img src="/images/logo.png" width="150" height="25" alt="PanteraFox"></a>
@@ -110,9 +119,9 @@
                                         <br> video</a>
                                 </li>
                                 {{--<li class="nav-item active">--}}
-                                    {{--<a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"--}}
-                                       {{--href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/photo">TOP--}}
-                                        {{--<br> photo</a>--}}
+                                {{--<a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"--}}
+                                {{--href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/photo">TOP--}}
+                                {{--<br> photo</a>--}}
                                 {{--</li>--}}
                             @endauth
                             <li class="nav-item active">
@@ -120,7 +129,48 @@
                                    href="/world/video">TOP <br> world</a>
                             </li>
                         </ul>
-                        <!-- Right Side Of Navbar -->
+                        @auth
+                            <ul class="header-bell_nav">
+                                <li class="header-bell_wrap dropdown" data-toggle="dropdown">
+                                    @if($userNewsService->getCountNewsForUser(Auth::user()->id) > 0)
+                                     <div class="counter">{{ $userNewsService->getCountNewsForUser(Auth::user()->id) }}</div>
+                                    @endif
+                                    <div class="bell"><i class="fa fa-bell" aria-hidden="true"></i></div>
+
+
+                                </li>
+                                <li class="header-bell_wrap">
+                                    @if(count($userNewsService->getNewsForUser(Auth::user()->id)) > 0)
+                                        <ul class="dropdown-menu news-dropdown">
+                                            <li class="row" style="color: #000;">
+                                                @foreach($userNewsService->getNewsForUser(Auth::user()->id) as $news)
+                                                    {!! $news['content'] !!}
+                                                @endforeach
+                                            </li>
+                                        </ul>
+                                    @endif
+                                </li>
+                            </ul>
+
+                            <script>
+                                $(document).on('click', '.header-bell_wrap', function () {
+                                    $.ajax({
+                                        url: '/news/clear',
+                                        type: 'post',
+                                        data: 'id={{Auth::user()->id}}',
+                                        beforeSend: function (xhrObj) {
+                                            xhrObj.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
+                                        },
+                                        success: function (res) {
+                                            if (res === 'success') {
+                                                $('.header-bell_wrap .counter').remove();
+                                            }
+                                        }
+                                    })
+                                });
+                            </script>
+                    @endauth
+                    <!-- Right Side Of Navbar -->
                         <ul class="nav navbar-nav navbar-right">
                             <!-- Authentication Links -->
                             @guest
@@ -172,9 +222,9 @@
                                 <br> video</a>
                         </li>
                         {{--<li class="nav-item active">--}}
-                            {{--<a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"--}}
-                               {{--href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/photo">TOP--}}
-                                {{--<br> photo</a>--}}
+                        {{--<a style="color: #ff7a03; line-height: 1; font-weight: bold;" class="nav-link"--}}
+                        {{--href="/country/{{strtolower($countryManager->getCountryNameById(Auth::user()->country_id))}}/photo">TOP--}}
+                        {{--<br> photo</a>--}}
                         {{--</li>--}}
                     @endauth
                     <li class="nav-item active">
@@ -235,7 +285,7 @@
             <div class="row">
                 <div class="col-12">
                     <p class="text-center">
-                        © 2018 PanteraFox Ltd. All rights reserved.
+                        Â© 2018 PanteraFox Ltd. All rights reserved.
                     </p>
                 </div>
             </div>

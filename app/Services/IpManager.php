@@ -35,7 +35,7 @@ class IpManager
      */
     private function getIpLocationViaAPI($ipAddress)
     {
-        return json_decode(file_get_contents('http://geoip.nekudo.com/api/'. $ipAddress), true);
+        return json_decode(file_get_contents('http://ip-api.com/json/'. $ipAddress), true);
     }
 
     public function getAllCountries()

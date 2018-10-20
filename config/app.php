@@ -181,6 +181,7 @@ return [
          * My providers
          */
         Laravel\Socialite\SocialiteServiceProvider::class,
+        \PanteraFox\Subscription\Resources\Providers\SubscriptionServiceProvider::class
 
     ],
 

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateParamsTable extends Migration
+class AddSubscribtionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateParamsTable extends Migration
      */
     public function up()
     {
-        Schema::create('params', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('top_views');
+            $table->integer('subscriber_id');
+            $table->integer('profile_id');
         });
     }
 
@@ -26,6 +27,6 @@ class CreateParamsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('params');
+        Schema::dropIfExists('subscriptions');
     }
 }

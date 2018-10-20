@@ -26,7 +26,7 @@ class CountryController extends Controller
      * @param string $content
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|void
      */
-    public function content($countryName, $content)
+    public function content(Request $request, $countryName, $content, VideoManager $videoManager)
     {
         $country = Country::where('name', $countryName)->first();
         $content = $content ?: 'photo';
@@ -71,37 +71,37 @@ class CountryController extends Controller
         }
 
         if ($content == 'video') {
-            AppService::updateTopViews();
             $contentLimit = 12;
-            $params = Params::find(1);
-            $top_views = $params->top_views;
+            $latest = $request->get('order') == 'new' ? true : false;
+            $load_more_xhr = $latest ? 'loadmore?order=new' : "loadmore";
 
-            $videos = DB::select(DB::raw("SELECT user_videos.*, users.first_name, users.last_name FROM user_videos
+            $video_sql = "SELECT user_videos.*, users.first_name, users.last_name FROM user_videos
                                 LEFT JOIN users ON users.id = user_videos.user_id
                                 LEFT JOIN countries ON users.country_id = countries.id
                                 WHERE countries.name = :countryName
-                                ORDER BY user_videos.views DESC , user_videos.updated_at
-                                LIMIT $contentLimit"), [':countryName' => $countryName]);
+                                ORDER BY";
+            if(!$latest)
+            {
+                $video_sql .= " user_videos.views DESC ,";
+            }
+            $video_sql .= " user_videos.created_at DESC LIMIT $contentLimit";
+
+            $videos = DB::select(DB::raw($video_sql), [':countryName' => $countryName]);
 
             $countVideos = DB::select(DB::raw("SELECT COUNT(user_videos.id) as q FROM user_videos
                                 LEFT JOIN users ON users.id = user_videos.user_id
                                 LEFT JOIN countries ON users.country_id = countries.id
                                 WHERE countries.name = ?"),[$countryName])[0]->q;
 
-            foreach ($videos as $video)
-            {
-                $raiting = floor($video->views * 100 / $top_views);
-                $raiting = ($raiting < 5 ? 5 : $raiting);
-                $raiting = ($raiting > 95 ? 95 : $raiting);
-                $video->raiting = $raiting;
-            }
+            $videos = $videoManager->butifyViewsCount($videos);
 
             return view('country-content', [
                 'country' => $country,
                 'content' => $videos,
                 'section' => 'video',
                 'countContent' => $countVideos,
-                'contentLimit' => $contentLimit
+                'contentLimit' => $contentLimit,
+                'load_more_xhr' => $load_more_xhr
             ]);
         }
 
@@ -124,11 +124,12 @@ class CountryController extends Controller
         }
         if ($content == 'video')
         {
-            return $videoManager->loadMoreForCountry($countryName, $offset);
+            $latest = $request->get('order') == 'new' ? true : false;
+            return $videoManager->loadMoreForCountry($countryName, $offset, $latest);
         }
     }
 
-    public function world($content)
+    public function world($content, VideoManager $videoManager)
     {
         $content = $content ?: 'photo';
         $country = new Country([
@@ -170,35 +171,25 @@ class CountryController extends Controller
         }
 
         if ($content == 'video') {
-            AppService::updateTopViews();
             $contentLimit = 12;
-            $params = Params::find(1);
-            $top_views = $params->top_views;
+            $load_more_xhr = "loadmore";
 
             $videos = DB::select(DB::raw("SELECT user_videos.*, u.first_name, u.last_name FROM user_videos
                 LEFT JOIN users u on user_videos.user_id = u.id
                 ORDER BY views desc, id desc limit $contentLimit"));
+            $videos = $videoManager->butifyViewsCount($videos);
 
             $countVideos = DB::select(DB::raw("SELECT COUNT(user_videos.id) as q FROM user_videos"))[0]->q;
-
-            foreach ($videos as $video)
-            {
-                $raiting = floor($video->views * 100 / $top_views);
-                $raiting = ($raiting < 5 ? 5 : $raiting);
-                $raiting = ($raiting > 95 ? 95 : $raiting);
-                $video->raiting = $raiting;
-            }
 
             return view('country-content', [
                 'country' => $country,
                 'content' => $videos,
                 'section' => 'video',
                 'countContent' => $countVideos,
-                'contentLimit' => $contentLimit
+                'contentLimit' => $contentLimit,
+                'load_more_xhr' => $load_more_xhr
             ]);
         }
-
-        return ['asd'=>$content];
     }
 
     public function loadMoreWorld

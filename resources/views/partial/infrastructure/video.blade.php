@@ -6,13 +6,13 @@
         });
     });
 
-    $(document).on('click', '.album-item-wrap.video-item img', function () {
+    $(document).on('click', '.album-item-wrap.video-item img, .clip-name', function () {
         var modal = $("#viewVideoModal");
         var id = $(this).closest('.video-item').data('id');
         var ytid = $(this).closest('.video-item').data('ytid');
         var link = 'https://www.youtube-nocookie.com/embed/' + ytid + '?rel=0&autoplay=true';
         var views = parseInt($(this).closest('.video-item').find('.views').children('span').text()) + 1;
-        $(this).closest('.video-item').find('.views').children('span').text(views);
+        // $(this).closest('.video-item').find('.views').children('span').text(views);
         modal.find('iframe').attr('src', link);
         modal.modal();
         $.ajax({

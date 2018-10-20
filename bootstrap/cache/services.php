@@ -31,6 +31,7 @@
     27 => 'PanteraFox\\Providers\\EventServiceProvider',
     28 => 'PanteraFox\\Providers\\RouteServiceProvider',
     29 => 'Laravel\\Socialite\\SocialiteServiceProvider',
+    30 => 'PanteraFox\\Subscription\\Resources\\Providers\\SubscriptionServiceProvider',
   ),
   'eager' => 
   array (
@@ -49,6 +50,7 @@
     12 => 'PanteraFox\\Providers\\AuthServiceProvider',
     13 => 'PanteraFox\\Providers\\EventServiceProvider',
     14 => 'PanteraFox\\Providers\\RouteServiceProvider',
+    15 => 'PanteraFox\\Subscription\\Resources\\Providers\\SubscriptionServiceProvider',
   ),
   'deferred' => 
   array (

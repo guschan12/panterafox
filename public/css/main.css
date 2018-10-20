@@ -7,6 +7,9 @@ body{
     background: #f5f8fa;
     margin-bottom: 60px;
 }
+.container{
+    margin-top: 70px;
+}
 .white-block
 {
     background: #fff;
@@ -22,7 +25,7 @@ img{
 }
 .navbar-default{
     background-color: #fff;
-    border-bottom: solid 1px #d3e0e9;
+    /*border-bottom: solid 1px #d3e0e9;*/
     margin-bottom: 20px;
 }
 .navbar-nav .nav-link {
@@ -72,6 +75,59 @@ button.navbar-toggler i{
 .navbar-header img{
     width: 150px;
 }
+
+.header-bell_nav{
+    display: inline-block;
+    list-style: none;
+    margin: 0 15px 0 0;
+}
+.header-bell_wrap{
+    position: relative;
+    cursor: pointer;
+}
+
+.header-bell_wrap .counter{
+    width: 15px;
+    height: 15px;
+    font-size: 10px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    background: #9a0a12;
+    color: #fff;
+    text-align: center;
+    position: absolute;
+    bottom: 1px;
+    right: -4px;
+}
+
+.header-bell_wrap .bell{
+    font-size: 23px;
+    color: #ff7a03;
+    display: block;
+}
+.news-dropdown{
+    left: -100px;
+    min-width: 15rem;
+    padding: 15px;
+}
+.news-dropdown .news{
+    margin-bottom: 5px;
+}
+.news-dropdown a{
+    text-decoration: none!important;
+}
+.news-dropdown span.name{
+    color: #444;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: block;
+}
+.news-dropdown p{
+    color: #666;
+    font-size: .8rem;
+}
+
 
 .user-wall__data {
     padding-top: 15px;
@@ -314,10 +370,12 @@ button.navbar-toggler i{
 {
     padding: 0 10px;
 }
+.video_wrap .video_owner{
+    font-size: 16px;
+}
 .video_wrap .views{
-    color: #6c757d;
-    font-size: 13px;
-    margin: 4px;
+    color: #000;
+    font-size: 16px;
 }
 .video_wrap .views i{
     font-size: 18px;
@@ -325,10 +383,10 @@ button.navbar-toggler i{
 .raiting
 {
     width: 150px;
-    height: 5px;
+    height: 2px;
     display: inline-block;
     vertical-align: top;
-    background: #000;
+    background: #FF7A03;
     position: relative;
 }
 .raiting .level{
@@ -350,4 +408,16 @@ footer{
     width: 100%;
     height: 60px;
     padding: 15px;
+}
+
+
+#subscriptionsModal .modal{
+    display: block !important;
+}
+#subscriptionsModal .modal-dialog{
+    overflow-y: initial !important
+}
+#subscriptionsModal .modal-body{
+    height: 500px;
+    overflow-y: auto;
 }
