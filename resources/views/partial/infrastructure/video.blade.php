@@ -8,28 +8,29 @@
 
     $(document).on('click', '.album-item-wrap.video-item img, .clip-name', function () {
         var modal = $("#viewVideoModal");
-        var id = $(this).closest('.video-item').data('id');
+        // var id = $(this).closest('.video-item').data('id');
         var ytid = $(this).closest('.video-item').data('ytid');
         var link = 'https://www.youtube-nocookie.com/embed/' + ytid + '?rel=0&autoplay=true';
-        var views = parseInt($(this).closest('.video-item').find('.views').children('span').text()) + 1;
+        // var views = parseInt($(this).closest('.video-item').find('.views').children('span').text()) + 1;
         // $(this).closest('.video-item').find('.views').children('span').text(views);
         modal.find('iframe').attr('src', link);
         modal.modal();
-        $.ajax({
-            type: 'post',
-            url: '/profile/user/video/view',
-            beforeSend: function (xhrObj) {
-                xhrObj.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
-            },
-            data: {id: id},
-            dataType: 'json',
-            success: function (res) {
-//                                          console.log(res);
-            },
-            error: function (err) {
-//                                          console.log(err);
-            }
-        });
+        //Increase Views count +1
+//         $.ajax({
+//             type: 'post',
+//             url: '/profile/user/video/view',
+//             beforeSend: function (xhrObj) {
+//                 xhrObj.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
+//             },
+//             data: {id: id},
+//             dataType: 'json',
+//             success: function (res) {
+// //                                          console.log(res);
+//             },
+//             error: function (err) {
+// //                                          console.log(err);
+//             }
+//         });
     });
 
     $(document).on('click', '.bar-button.remove', function () {

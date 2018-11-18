@@ -16,6 +16,7 @@ class EditProfileController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        ini_set('memory_limit', '512M');
     }
 
     public function index()

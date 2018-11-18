@@ -20,7 +20,6 @@ class AppController extends Controller
      */
     public function index(AppService $appService, VideoManager $videoManager)
     {
-
         //TODO: IF IT WILL ENABLED IN FUTURE - THIS QUERY CALCULATE TOP OF COUNTRIES BY COUNT LIKE OF PHOTOS
 //        $topCountries = DB::select(DB::raw("SELECT valid_countries.*, sum(top.raiting) as raiting
 //            FROM user_photos
@@ -41,15 +40,14 @@ class AppController extends Controller
 //            ORDER BY raiting DESC, user_photos.id DESC"));
 
         if (isset(Auth::user()->id)){
-            $topCountries = DB::select(DB::raw("SELECT c.name, c.id as country_id, u.id, sum(sum_views) as country_rating FROM countries
-                          LEFT JOIN users u ON u.country_id = countries.id
-                          right join countries c on u.country_id = c.id
+            $topCountries = DB::select(DB::raw("SELECT c.name, c.id as country_id, u.id, sum(sum_views) as country_rating FROM countries c
+                          LEFT JOIN users u ON u.country_id = c.id
                           LEFT JOIN
                           (select *, sum(views) as sum_views
                            from user_videos
                            group by user_id)
                           uv ON uv.user_id = u.id
-                          WHERE u.id != :user_id
+                          WHERE c.id != (SELECT country_id FROM users where id = :user_id)
                           group by u.country_id
                           order by country_rating desc
                         LIMIT 3"), [':user_id' => Auth::user()->id]);

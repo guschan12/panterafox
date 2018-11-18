@@ -281,11 +281,14 @@
     <br>
 
     <footer class="footer navbar-fixed-bottom">
-        <div class="container">
+        <div class="container" style="margin-top: 5px;">
             <div class="row">
                 <div class="col-12">
                     <p class="text-center">
                         © 2018 PanteraFox Ltd. All rights reserved.
+                    </p>
+                    <p class="text-center">
+                        Contact us info@panterafox.top
                     </p>
                 </div>
             </div>

@@ -243,6 +243,7 @@ class VideoManager
                     "https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=$ytid&key=AIzaSyCe7UB6H928GyEjHaIHeY5ZJiAmyxP_dYc"
                 ),
                 true);
+            $this->youTubeResponse = $response;
         } else {
             $response = $this->youTubeResponse;
         }

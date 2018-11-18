@@ -106,7 +106,7 @@
                         $.each(res, function () {
                             $('.album-body').append(this);
                             var newCount = getOffset();
-                            if(getOffset() >= {{ $contentLimit }})
+                            if(getOffset() >= {{ $countContent }})
                             {
                                 $('#loadMore').remove();
                                 

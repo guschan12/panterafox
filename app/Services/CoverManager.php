@@ -10,13 +10,19 @@ class CoverManager
 {
     /**
      * @param UploadedFile $file
-     * @param array $crop
+     * @param array | null $crop
      *
      * @return bool
      */
-    public function updatePhoto(UploadedFile $file, array $crop)
+    public function updatePhoto(UploadedFile $file, $crop)
     {
         $cover = Cover::where('user_id', Auth::user()->id)->first();
+
+        if (is_null($crop)){
+
+            $crop = json_decode($cover->crop, true);
+        }
+
         $cover_source = $cover->source_link;
         $old_source_arr = explode('/', $cover_source);
         $old_filename = end($old_source_arr);
@@ -42,13 +48,19 @@ class CoverManager
     }
 
     /**
-     * @param array $crop
+     * @param array | null $crop
      *
      * @return bool
      */
-    public function updateCrop(array $crop)
+    public function updateCrop($crop)
     {
         $cover = Cover::where('user_id', Auth::user()->id)->first();
+
+        if (is_null($crop)){
+
+            $crop = json_decode($cover->crop, true);
+        }
+
         $old_thumb_link = $cover->thumb_link;
         $old_thumb_name_arr = explode('/', $old_thumb_link);
         $old_thumb_name = end($old_thumb_name_arr);
